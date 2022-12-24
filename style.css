@@ -9,6 +9,9 @@ html,body{
 }
 body {
   background-color: #f4c531;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 }
 .wrapper {
   background-color: #ffffff;
