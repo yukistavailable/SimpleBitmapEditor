@@ -10,7 +10,7 @@ let pushBtn = document.getElementById("push-btn");
 let widthValue = document.getElementById("width-value");
 let grayScaleValue = document.getElementById("gray-scale-value");
 
-const apiUrl = new URL('http://localhost:8000/v1/bitmap');
+const apiUrl = new URL('http://178.128.83.251/admin/v1/bitmap');
 const url = apiUrl.toString();
 
 async function postBitmap(value) {
