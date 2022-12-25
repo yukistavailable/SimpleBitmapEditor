@@ -7,6 +7,11 @@ let grayScale = document.getElementById("gray-scale");
 let eraseBtn = document.getElementById("erase-btn");
 let paintBtn = document.getElementById("paint-btn");
 let pushBtn = document.getElementById("push-btn");
+let pullBtn = document.getElementById("pull-btn");
+let topBtn = document.getElementById("top-btn");
+let bottomBtn = document.getElementById("bottom-btn");
+let leftBtn = document.getElementById("left-btn");
+let rightBtn = document.getElementById("right-btn");
 let widthValue = document.getElementById("width-value");
 let grayScaleValue = document.getElementById("gray-scale-value");
 
@@ -14,10 +19,11 @@ const apiUrl = new URL('https://piyopiyo.de/v1/bitmap');
 // const apiUrl = new URL('http://localhost/v1/bitmap');
 const url = apiUrl.toString();
 
-async function postBitmap(value) {
+async function postBitmap(value, char, memo) {
   data = {
     'value': value,
-    'kanji': '魚'
+    'kanji': char,
+    'memo': memo
   };
     const response = await fetch(url, {
         method: 'POST',
@@ -29,6 +35,14 @@ async function postBitmap(value) {
     });
     return response.json();
 
+}
+
+async function getBitmap() {
+  const id = document.getElementById("pull-id").value;
+  const getUrl = url + '/' + id;
+    const response = await fetch(getUrl);
+    const data = await response.json();
+    return data;
 }
 
 //Events object
@@ -133,6 +147,52 @@ gridButton.addEventListener("click", () => {
     container.appendChild(div);
   }
 });
+
+// Shift the grid to the top
+topBtn.addEventListener("click", () => {
+    let grid = document.getElementsByClassName('gridCol');
+    for (let i = 0; i < grid.length - Number(gridWidth.value); i++) {
+        grid[i].style.backgroundColor = grid[i + Number(gridWidth.value)].style.backgroundColor;
+    }
+    for (let i = grid.length - Number(gridWidth.value); i < grid.length; i++) {
+        grid[i].style.backgroundColor = 'transparent';
+    }
+});
+
+bottomBtn.addEventListener("click", () => {
+  let grid = document.getElementsByClassName('gridCol');
+  for (let i = grid.length-1; i > Number(gridWidth.value)-1; i--) {
+    grid[i].style.backgroundColor = grid[i - Number(gridWidth.value)].style.backgroundColor;
+  }
+  for (let i = 0; i < Number(gridWidth.value); i++) {
+    grid[i].style.backgroundColor = 'transparent';
+  }
+});
+
+leftBtn.addEventListener("click", () => {
+    let grid = document.getElementsByClassName('gridCol');
+    for (let i = 0; i < grid.length; i++) {
+        if (i % Number(gridWidth.value) === 0) {
+        for (let j = 0; j < Number(gridWidth.value) - 1; j++) {
+            grid[i+j].style.backgroundColor = grid[i+j+1].style.backgroundColor;
+        }
+        grid[i+Number(gridWidth.value)-1].style.backgroundColor = 'transparent';
+        }
+    }
+})
+
+rightBtn.addEventListener("click", () => {
+    let grid = document.getElementsByClassName('gridCol');
+    for (let i = 0; i < grid.length; i++) {
+        if (i % Number(gridWidth.value) === 0) {
+        for (let j = Number(gridWidth.value) - 1; j > 0; j--) {
+            grid[i+j].style.backgroundColor = grid[i+j-1].style.backgroundColor;
+        }
+        grid[i].style.backgroundColor = 'transparent';
+        }
+    }
+})
+
 function checker(elementId) {
   let gridColumns = document.querySelectorAll(".gridCol");
   //loop through all boxes
@@ -172,6 +232,14 @@ const parse_rgb_string = (rgb) => {
 pushBtn.addEventListener("click", () => {
   let gridCols = document.getElementsByClassName('gridCol');
   let greyScales = new Array();
+  let char = document.getElementById("char").value;
+  let memo = document.getElementById("memo").value;
+
+  // if char is empty, alert
+    if (char === "") {
+        alert("Please enter a character");
+        return;
+    }
   for (const gridCol of gridCols) {
     let color = gridCol.style.backgroundColor;
     let greyScale = 255;
@@ -184,8 +252,33 @@ pushBtn.addEventListener("click", () => {
     greyScales.push(greyScale);
   }
   stringGreyScales = greyScales.join(',');
-  const response =   postBitmap(stringGreyScales);
-  console.log(response);
+  const response = postBitmap(stringGreyScales, char, memo);
+  response.then((data) => {
+    id = data;
+    document.getElementById("pull-id").value = id;
+
+    alert("Successfully submitted. Your ID is " + id);
+  });
+})
+
+pullBtn.addEventListener("click", () => {
+    const response = getBitmap();
+    response.then((data) => {
+        let greyScales = data['value'].split(',');
+        let gridCols = document.getElementsByClassName('gridCol');
+        let i = 0;
+        for (const gridCol of gridCols) {
+          let greyScale = greyScales[i];
+          if (greyScale === 255) {
+              gridCol.style.backgroundColor = 'transparent';
+          } else {
+              gridCol.style.backgroundColor = `rgb(${greyScale}, ${greyScale}, ${greyScale})`;
+          }
+          i++;
+        }
+        document.getElementById("char").value = data['kanji'];
+        document.getElementById("memo").value = data['memo'];
+    });
 })
 
 
@@ -205,3 +298,6 @@ grayScaleValue.innerHTML = grayScale.value;
 
 widthValue.innerHTML =
     gridWidth.value < 9 ? `0${gridWidth.value}` : gridWidth.value;
+
+//Click on grid button to create grid
+gridButton.click();

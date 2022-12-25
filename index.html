@@ -12,7 +12,8 @@
     <!-- Stylesheet -->
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body oncontextmenu="return false;" onMouseDown="return false;" onSelectStart="return false;">
+<!--  <body oncontextmenu="return false;" onMouseDown="return false;" onSelectStart="return false;">-->
+  <body>
     <div class="wrapper">
       <div class="options">
         <div class="opt-wrapper">
@@ -38,10 +39,34 @@
 <!--          <input type="color" id="color-input" />-->
           <button id="erase-btn">Erase</button>
           <button id="paint-btn">Paint</button>
-          <button id="push-btn">Push to Server</button>
+          <button id="push-btn">Submit</button>
+          <button id="pull-btn">Pull</button>
         </div>
+        <div>
+          <button id="top-btn" class="btn cross-key-btn"><span class="top-mark">▲</span></button>
+          <button id="left-btn" class="btn cross-key-btn"><span class="left-mark">▲</span></button>
+          <button id="right-btn" class="btn cross-key-btn"><span class="right-mark">▲</span></button>
+          <button id="bottom-btn" class="btn cross-key-btn"><span class="bottom-mark">▲</span></button>
+        </div>
+        <div class="opt-wrapper">
+          <div class="opt-wrapper">
+            <p>Memo</p>
+            <input type="text" id="memo">
+          </div>
+          <div class="opt-wrapper">
+            <p>Char</p>
+            <input type="text" id="char" maxlength="1">
+          </div>
+          <div class="opt-wrapper">
+            <p>Pull ID</p>
+            <input type="text" id="pull-id">
+          </div>
+        </div>
+<!--        <div class="opt-wrapper">-->
+<!--          <p></p>-->
+<!--        </div>-->
       </div>
-      <div class="container"></div>
+      <div class="container" oncontextmenu="return false;" onMouseDown="return false;" onSelectStart="return false;"></div>
     </div>
     <!-- Script -->
     <script src="font-editor.js"></script>
