@@ -11,6 +11,7 @@ let widthValue = document.getElementById("width-value");
 let grayScaleValue = document.getElementById("gray-scale-value");
 
 const apiUrl = new URL('https://piyopiyo.de/v1/bitmap');
+// const apiUrl = new URL('http://localhost/v1/bitmap');
 const url = apiUrl.toString();
 
 async function postBitmap(value) {
@@ -18,7 +19,6 @@ async function postBitmap(value) {
     'value': value,
     'kanji': '魚'
   };
-  console.log(data);
     const response = await fetch(url, {
         method: 'POST',
         mode: 'cors',
@@ -114,7 +114,6 @@ gridButton.addEventListener("click", () => {
       });
 
       col.addEventListener(events[deviceType].move, (e) => {
-        console.log('move')
         /* elementFromPoint returns the element at x,y position of mouse */
         let elementId = document.elementFromPoint(
           !isTouchDevice() ? e.clientX : e.touches[0].clientX,
@@ -172,18 +171,20 @@ const parse_rgb_string = (rgb) => {
 
 pushBtn.addEventListener("click", () => {
   let gridCols = document.getElementsByClassName('gridCol');
-  let grayScales = new Array();
+  let greyScales = new Array();
   for (const gridCol of gridCols) {
     let color = gridCol.style.backgroundColor;
-    let grayScale = 255;
+    let greyScale = 255;
     if (color) {
-      let rgb = parse_rgb_string(color);
-      grayScale = Number(rgb[0]);
+      if (color !== 'transparent') {
+        let rgb = parse_rgb_string(color);
+        greyScale = Number(rgb[0]);
+      }
     }
-    grayScales.push(grayScale);
+    greyScales.push(greyScale);
   }
-  stringGrayScales = grayScales.join(',');
-  const response =   postBitmap(stringGrayScales);
+  stringGreyScales = greyScales.join(',');
+  const response =   postBitmap(stringGreyScales);
   console.log(response);
 })
 
